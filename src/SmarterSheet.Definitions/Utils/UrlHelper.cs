@@ -55,4 +55,40 @@ internal static class UrlHelper
 
         return strBuilder.ToString()[..^1];
     }
+
+    public static string CreateUrlParameter(IEnumerable<SheetInclusion> inclusions)
+    {
+        var strBuilder = new StringBuilder("?include=");
+
+        foreach (var inclusion in inclusions)
+        {
+            strBuilder.Append($"{inclusion.ToStringFast()},");
+        }
+
+        return strBuilder.ToString()[..^1];
+    }
+
+    public static string CreateUrlParameter(IEnumerable<FolderInclusion> inclusions)
+    {
+        var strBuilder = new StringBuilder("?include=");
+
+        foreach (var inclusion in inclusions)
+        {
+            strBuilder.Append($"{inclusion.ToStringFast()},");
+        }
+
+        return strBuilder.ToString()[..^1];
+    }
+
+    public static string CreateUrlParameter(IEnumerable<TemplateInclusion> inclusions)
+    {
+        var strBuilder = new StringBuilder("?include=");
+
+        foreach (var inclusion in inclusions)
+        {
+            strBuilder.Append($"{inclusion.ToStringFast()},");
+        }
+
+        return strBuilder.ToString()[..^1];
+    }
 }

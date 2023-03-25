@@ -100,6 +100,7 @@ public sealed class RowTests : IAsyncLifetime
         if (_testSheet == null)
             return;
 
-        await _sut.DeleteSheet(_testSheet.Id);
+        if (!await _sut.DeleteSheet(_testSheet.Id))
+            throw new Exception("Failed to clean up");
     }
 }

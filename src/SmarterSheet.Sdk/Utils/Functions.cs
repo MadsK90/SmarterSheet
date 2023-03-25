@@ -152,6 +152,43 @@ internal static class Functions
         return false;
     }
 
+    //TODO: Need a better way of handing paginated results
+    /// <summary>
+    /// Hadnles a HttpResponseMessage and tries to read a IndexResult with the type of 'T'
+    /// </summary>
+    /// <typeparam name="T">Type to be deserialized</typeparam>
+    /// <param name="response">HttpResponseMessage to be read.</param>
+    /// <returns>Returns the deserialized IEnumerable with type of 'T'.</returns>
+    public static async Task<IEnumerable<T>> HandleIndexResultResponse<T>(this HttpResponseMessage response) where T : new()
+    {
+        if (!response.IsSuccessStatusCode)
+        {
+            Log.Error($"Http request failed: {response.StatusCode}");
+            return Array.Empty<T>();
+        }
+
+        try
+        {
+            var content = await response.Content.ReadFromJsonAsync<IndexResult<T>>();
+            if(content == null)
+                return Array.Empty<T>();
+
+            if (content.TotalCount <= 0)
+            {
+                Log.Error($"Result empty");
+                return Array.Empty<T>();
+            }
+
+            return content.Data;
+        }
+        catch
+        {
+            Log.Error($"Failed to deserialize response as IndexResult<{typeof(T)}>: \n{await response.Content.ReadAsStringAsync()}");
+        }
+
+        return Array.Empty<T>();
+    }
+
     public static CreateSheet ConvertToCreateSheet(this Sheet sheet)
     {
         if(sheet.Columns == null || !sheet.Columns.Any())

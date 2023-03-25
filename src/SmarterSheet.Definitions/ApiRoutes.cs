@@ -70,14 +70,110 @@ public static class ApiRoutes
 
     public static class Sheets
     {
+
+
         public static string CreateSheet()
         {
             return $"{Version}/sheets";
         }
 
+        public static string CreateSheetInFolder(ulong folderId)
+        {
+            return $"{Version}/folders/{folderId}/sheets";
+        }
+
+        public static string CreateSheetInWorkspace(ulong workspaceId)
+        {
+            return $"{Version}/workspaces/{workspaceId}/sheets";
+        }
+
         public static string DeleteSheet(ulong sheetId)
         {
             return $"{Version}/sheets/{sheetId}";
+        }
+
+        public static string GetSheet(ulong sheetId, IEnumerable<SheetInclusion>? inclusions = null)
+        {
+            var path = $"{Version}/sheets/{sheetId}";
+
+            if(inclusions == null) 
+                return path;
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}";
+        }
+
+        public static string GetSheet(ulong sheetId, ulong filterId, IEnumerable<SheetInclusion>? inclusions = null)
+        {
+            var path = $"{Version}/sheets/{sheetId}";
+
+            if (inclusions == null)
+                return $"{path}exclude=filteredOutRows&filter={filterId}";
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}&exclude=filteredOutRows&filter={filterId}";
+        }
+    
+        public static string GetSheets(IEnumerable<SheetInclusion>? inclusions = null)
+        {
+            var path = $"{Version}/sheets";
+
+            if( inclusions == null)
+                return path;
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}";
+        }
+
+        public static string CopySheet(ulong sheedId, IEnumerable<SheetInclusion>? inclusions)
+        {
+            var path = $"{Version}/sheets/{sheedId}/copy";
+
+            if (inclusions == null)
+                return path;
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}";
+        }
+
+        public static string MoveSheet(ulong sheetId)
+        {
+            return $"{Version}/sheets/{sheetId}/move";
+        }
+
+        public static string RenameSheet(ulong sheetId)
+        {
+            return $"{Version}/sheets/{sheetId}";
+        }
+
+        public static string CreateSheetFromTemplate(IEnumerable<TemplateInclusion>? inclusions)
+        {
+            var path = $"{Version}/sheets";
+
+            if(inclusions == null)
+                return path;
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}";
+        }
+
+        public static string CreateSheetFromTemplateInFolder(ulong folderId, IEnumerable<SheetInclusion>? inclusions)
+        {
+            var path = $"{Version}/folders/{folderId}/sheets";
+
+            if (inclusions == null)
+                return path;
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}";
+        }
+    }
+
+    public static class Folders
+    {
+        public static string GetFolder(ulong folderId, IEnumerable<FolderInclusion>? inclusions = null)
+        {
+            var path = $"{Version}/folders/{folderId}";
+
+            if (inclusions == null)
+                return path;
+
+            return $"{path}{UrlHelper.CreateUrlParameter(inclusions)}";
+
         }
     }
 }
