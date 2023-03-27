@@ -1,6 +1,6 @@
-﻿namespace SmarterSheet.Sdk.Requests.Sheet;
+﻿namespace SmarterSheet.Sdk.Requests.Folders;
 
-internal sealed class CopySheetRequest
+public sealed class CopyFolderRequest
 {
     [JsonPropertyName("destinationType")]
     public string DestinationType { get; set; } = default!;

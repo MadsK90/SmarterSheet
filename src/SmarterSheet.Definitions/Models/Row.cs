@@ -11,6 +11,9 @@ public sealed class Row
     [JsonPropertyName("discussions")]
     public Discussion[]? Discussions { get; set; }
 
+    [JsonPropertyName("columns")]
+    public Column[]? Columns { get; set; }
+
     [JsonPropertyName("parentId")]
     public ulong ParentId { get; set; }
 

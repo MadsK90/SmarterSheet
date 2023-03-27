@@ -8,3 +8,6 @@ global using SmarterSheet.Sdk.Models;
 global using SmarterSheet.Sdk.Builders.Rows;
 global using SmarterSheet.Definitions;
 global using SmarterSheet.Definitions.Models;
+global using Serilog;
+global using Xunit.Abstractions;
+global using SmarterSheet.SDK.Tests.Unit.Utils;

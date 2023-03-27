@@ -1,16 +1,24 @@
 ﻿namespace SmarterSheet.SDK.Tests.Unit;
 
-public sealed class RowTests
+public sealed class RowTests : SheetClientTests
 {
     #region Fields
     private readonly SheetClient _sut;
     private readonly Row[] _rows;
+    private readonly Row _row;
     #endregion
 
-    public RowTests()
+    #region Constants
+    
+    private const ulong TO_SHEET_ID = 3000;
+    
+    #endregion
+
+    public RowTests(ITestOutputHelper output) : base(output)
     {
         _rows = CreateTestRows();
-        _sut = new SheetClient(SetupMock(_rows));
+        _row = CreateTestRow();
+        _sut = CreateSheetClient();
     }
 
     #region Get
@@ -18,34 +26,31 @@ public sealed class RowTests
     [Fact]
     public async Task GetRow_ReturnRow_WhenRowExists()
     {
-        //Arrange
-        var row = _rows[0];
-
         //Act
-        var retrivedRow = await _sut.GetRow(row.SheetId, row.Id);
+        var retrivedRow = await _sut.GetRow(_row.SheetId, _row.Id);
 
         //Assert
         retrivedRow.Should()
             .NotBeNull();
         
         retrivedRow!.Id.Should()
-            .Be(row.Id);
+            .Be(_row.Id);
 
         retrivedRow.SheetId.Should()
-            .Be(row.SheetId);
+            .Be(_row.SheetId);
 
         retrivedRow.CreatedAt.Should()
-            .Be(row.CreatedAt);
+            .Be(_row.CreatedAt);
 
         retrivedRow.ModifiedAt.Should()
-            .Be(row.ModifiedAt);
+            .Be(_row.ModifiedAt);
 
         retrivedRow.Cells.Should().NotBeNullOrEmpty();
 
         var cells = retrivedRow.Cells.As<Cell[]>();
 
         cells.Should()
-            .ContainEquivalentOf(row.Cells![0]);
+            .ContainEquivalentOf(_row.Cells![0]);
     }
 
     [Fact]
@@ -65,67 +70,61 @@ public sealed class RowTests
     [Fact]
     public async Task AddRow_ReturnRow_WhenSuccessful()
     {
-        //Arange
-        var row = _rows[0];
-
         //Act
-        var addedRow = await _sut.AddRow(row.SheetId, row);
+        var addedRow = await _sut.AddRow(_row.SheetId, _row);
 
         //Assert
         addedRow.Should()
          .NotBeNull();
 
         addedRow!.Id.Should()
-            .Be(row.Id);
+            .Be(_row.Id);
 
         addedRow.SheetId.Should()
-            .Be(row.SheetId);
+            .Be(_row.SheetId);
 
         addedRow.CreatedAt.Should()
-            .Be(row.CreatedAt);
+            .Be(_row.CreatedAt);
 
         addedRow.ModifiedAt.Should()
-            .Be(row.ModifiedAt);
+            .Be(_row.ModifiedAt);
 
         addedRow.Cells.Should().NotBeNullOrEmpty();
 
         var cells = addedRow.Cells.As<Cell[]>();
 
         cells.Should()
-            .ContainEquivalentOf(row.Cells![0]);
+            .ContainEquivalentOf(_row.Cells![0]);
     }
 
     [Fact]
     public async Task AddRow_RowBuilder_ReturnRow_WhenSuccessful()
     {
-        //Arrange
-        var row = _rows[0];
-
         //Act
-        var addedRow = await _sut.AddRow(row.SheetId, RowBuilder.DefaultAddRow(row));
+        var addedRow = await _sut.AddRow(_row.SheetId, RowBuilder.DefaultAddRow(_row));
 
         //Assert
         addedRow.Should()
          .NotBeNull();
 
         addedRow!.Id.Should()
-            .Be(row.Id);
+            .Be(_row.Id);
 
         addedRow.SheetId.Should()
-            .Be(row.SheetId);
+            .Be(_row.SheetId);
 
         addedRow.CreatedAt.Should()
-            .Be(row.CreatedAt);
+            .Be(_row.CreatedAt);
 
         addedRow.ModifiedAt.Should()
-            .Be(row.ModifiedAt);
+            .Be(_row.ModifiedAt);
 
         addedRow.Cells.Should().NotBeNullOrEmpty();
 
         var cells = addedRow.Cells.As<Cell[]>();
 
         cells.Should()
-            .ContainEquivalentOf(row.Cells![0]);
+            .ContainEquivalentOf(_row.Cells![0]);
     }
 
     [Fact]
@@ -207,11 +206,8 @@ public sealed class RowTests
     [Fact]
     public async Task CopyRow_ReturnsTrue_WhenSuccessful()
     {
-        //Assign
-        var row = _rows[0];
-
         //Act
-        var copySuccessful = await _sut.CopyRowFromSheet(row.SheetId, row, 1);
+        var copySuccessful = await _sut.CopyRowFromSheet(_row.SheetId, _row, TO_SHEET_ID);
 
         //Assert
         copySuccessful.Should().Be(true);
@@ -221,7 +217,7 @@ public sealed class RowTests
     public async Task CopyRows_ReturnsTrue_WhenSuccessful()
     {
         //Act
-        var copySuccessful = await _sut.CopyRowsFromSheet(_rows[0].SheetId, _rows, 1);
+        var copySuccessful = await _sut.CopyRowsFromSheet(_rows[0].SheetId, _rows, TO_SHEET_ID);
 
         //Assert
         copySuccessful.Should().Be(true);
@@ -234,11 +230,8 @@ public sealed class RowTests
     [Fact]
     public async Task DeleteRow_ReturnsTrue_WhenSuccessful()
     {
-        //Arrange
-        var row = _rows[0];
-
         //Act
-        var deleteSuccessful = await _sut.DeleteRow(row.SheetId, row.Id);
+        var deleteSuccessful = await _sut.DeleteRow(_row.SheetId, _row.Id);
 
         //Assert
         deleteSuccessful.Should().Be(true);
@@ -308,6 +301,8 @@ public sealed class RowTests
 
     #endregion
 
+    #region Setup
+
     private static Row[] CreateTestRows()
     {
         return new Row[]
@@ -361,67 +356,97 @@ public sealed class RowTests
         };
     }
 
-    private static HttpClient SetupMock(Row[] rows)
+    private static Row CreateTestRow()
     {
-        var mockHttp = new MockHttpMessageHandler();
+        return new Row
+        {
+            Id = 1000,
+            SheetId = 2,
+            ModifiedAt = DateTime.MinValue,
+            CreatedAt = DateTime.MinValue,
+            RowNumber = 1,
+            Cells = new Cell[]
+               {
+                    new Cell
+                    {
+                        ColumnId = 1,
+                        DisplayValue = "Sigle Row Test",
+                        Value = "Sigle Row Test"
+                    },
+                    new Cell
+                    {
+                        ColumnId = 2,
+                        DisplayValue = "Sigle Row Test Again",
+                        Value = "Sigle Row Test Again"
+                    },
+               }
+        };
+    }
 
-        MockGetRowResponse(mockHttp, rows[0]);
-        MockAddRowResponse(mockHttp, rows);
-        MockCopyRowResponse(mockHttp, rows);
-        MockDeleteRowResponse(mockHttp, rows[0]);
-        MockDeleteRowsResponse(mockHttp, rows);
-        MockUpdateRowResponse(mockHttp, rows[0]);
-
-        var httpCient = mockHttp.ToHttpClient();
-        httpCient.BaseAddress = new Uri(ApiRoutes.Base);
-
-        return httpCient;
+    protected override void RegisterResponses(MockHttpMessageHandler mockHttp)
+    {
+        MockGetRowResponse(mockHttp, _row);
+        MockAddRowResponse(mockHttp, _row);
+        MockAddRowsResponse(mockHttp, _rows);
+        MockCopyRowsResponse(mockHttp, _rows);
+        MockCopyRowResponse(mockHttp, _row);
+        MockDeleteRowResponse(mockHttp, _row);
+        MockDeleteRowsResponse(mockHttp, _rows);
+        MockUpdateRowResponse(mockHttp, _row);
 
         #region Local Functions
 
         static void MockGetRowResponse(MockHttpMessageHandler mockHttp, Row row)
         {
-            mockHttp.When(ApiRoutes.Rows.GetRow(row.SheetId, row.Id))
+            mockHttp.When(HttpMethod.Get, ApiRoutes.Rows.GetRow(row.SheetId, row.Id))
                 .Respond(HttpStatusCode.OK, JsonContent.Create(row));
         }
 
-        static void MockAddRowResponse(MockHttpMessageHandler mockHttp, Row[] rows)
+        static void MockAddRowResponse(MockHttpMessageHandler mockHttp, Row row)
         {
-            var result = new ResultObject<Row[]>
-            {
-                Message = "SUCCESS",
-                ResultCode = 0,
-                Result = rows
-            };
-
-            mockHttp.When(ApiRoutes.Rows.AddRow(rows[0].SheetId))
-                .Respond(HttpStatusCode.OK, JsonContent.Create(result));
+            mockHttp.When(HttpMethod.Post, ApiRoutes.Rows.AddRow(row.SheetId))
+                .Respond(HttpStatusCode.OK, CreateSuccessfulResult(row));
         }
 
-        static void MockCopyRowResponse(MockHttpMessageHandler mockHttp, Row[] rows)
+        static void MockAddRowsResponse(MockHttpMessageHandler mockHttp, Row[] rows)
         {
-            mockHttp.When(ApiRoutes.Rows.CopyRowFromSheet(rows[0].SheetId))
+            mockHttp.When(HttpMethod.Post, ApiRoutes.Rows.AddRows(rows[0].SheetId))
+                .Respond(HttpStatusCode.OK, CreateSuccessfulResult(rows));
+        }
+
+        static void MockCopyRowsResponse(MockHttpMessageHandler mockHttp, Row[] rows)
+        {
+            mockHttp.When(HttpMethod.Post, ApiRoutes.Rows.CopyRowFromSheet(rows[0].SheetId))
+                .Respond(HttpStatusCode.OK);
+        }
+
+        static void MockCopyRowResponse(MockHttpMessageHandler mockHttp, Row row)
+        {
+            mockHttp.When(HttpMethod.Post, ApiRoutes.Rows.CopyRowFromSheet(row.SheetId))
                 .Respond(HttpStatusCode.OK);
         }
 
         static void MockDeleteRowResponse(MockHttpMessageHandler mockHttp, Row row)
         {
-            mockHttp.When(ApiRoutes.Rows.DeleteRow(row.SheetId, row.Id))
+            mockHttp.When(HttpMethod.Delete, ApiRoutes.Rows.DeleteRow(row.SheetId, row.Id))
                 .Respond(HttpStatusCode.OK);
         }
 
         static void MockDeleteRowsResponse(MockHttpMessageHandler mockHttp, Row[] rows)
         {
-            mockHttp.When(ApiRoutes.Rows.DeleteRows(rows[0].SheetId, rows.Select(x => x.Id)))
+            mockHttp.When(HttpMethod.Delete, ApiRoutes.Rows.DeleteRows(rows[0].SheetId, rows.Select(x => x.Id)))
                  .Respond(HttpStatusCode.OK);
         }
 
         static void MockUpdateRowResponse(MockHttpMessageHandler mockHttp, Row row)
         {
-            mockHttp.When(ApiRoutes.Rows.UpdateRow(row.SheetId))
+            mockHttp.When(HttpMethod.Put, ApiRoutes.Rows.UpdateRow(row.SheetId))
                 .Respond(HttpStatusCode.OK);
         }
 
         #endregion
+
     }
+
+    #endregion
 }

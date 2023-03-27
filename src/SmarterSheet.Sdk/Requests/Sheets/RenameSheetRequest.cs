@@ -1,4 +1,4 @@
-﻿namespace SmarterSheet.Sdk.Requests.Sheet;
+﻿namespace SmarterSheet.Sdk.Requests.Sheets;
 
 internal sealed class RenameSheetRequest
 {

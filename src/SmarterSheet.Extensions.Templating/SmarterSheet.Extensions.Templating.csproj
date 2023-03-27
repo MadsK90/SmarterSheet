@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NoAlloq" Version="0.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmarterSheet.Definitions\SmarterSheet.Definitions.csproj" />
+    <ProjectReference Include="..\SmarterSheet.Sdk\SmarterSheet.Sdk.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -20,6 +20,7 @@ internal static class Functions
 
         try
         {
+            var str = await response.Content.ReadAsStringAsync();
             var content = await response.Content.ReadFromJsonAsync<T>();
             if (content == null)
                 return default;
@@ -64,7 +65,7 @@ internal static class Functions
         }
         catch
         {
-            Log.Error($"Failed to deserialize response as {typeof(T)}: \n{await response.Content.ReadAsStringAsync()}");
+            Log.Error($"Failed to deserialize response as ResultResponse<{typeof(T)}>: \n{await response.Content.ReadAsStringAsync()}");
         }
 
         return default;
@@ -137,6 +138,7 @@ internal static class Functions
 
         try
         {
+            var gg = await response.Content.ReadAsStringAsync();
             var content = await response.Content.ReadFromJsonAsync<EmptyResultObject>();
 
             if (content == null || content.ResultCode != 0)
@@ -159,7 +161,7 @@ internal static class Functions
     /// <typeparam name="T">Type to be deserialized</typeparam>
     /// <param name="response">HttpResponseMessage to be read.</param>
     /// <returns>Returns the deserialized IEnumerable with type of 'T'.</returns>
-    public static async Task<IEnumerable<T>> HandleIndexResultResponse<T>(this HttpResponseMessage response) where T : new()
+    public static async Task<IEnumerable<T>> HandleIndexResultResponseAsync<T>(this HttpResponseMessage response) where T : new()
     {
         if (!response.IsSuccessStatusCode)
         {

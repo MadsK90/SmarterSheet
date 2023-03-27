@@ -10,7 +10,7 @@ public sealed class RowTests : IAsyncLifetime
     {
         var httpClient = new HttpClient
         {
-            BaseAddress = new Uri(ApiRoutes.Base)
+            BaseAddress = new Uri(ApiRoutes.BASE)
         };
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "82XgDAzgQqF1PuXYy1pkTkccp2QQfRjGI9lrF");
 

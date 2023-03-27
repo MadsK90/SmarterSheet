@@ -20,7 +20,7 @@ static HttpClient CreateHttpClient()
     {
         BaseAddress = new Uri("https://api.smartsheet.com")
     };
-    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "82XgDAzgQqF1PuXYy1pkTkccp2QQfRjGI9lrF");
+    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "APIKEY");
 
     return httpClient;
 }

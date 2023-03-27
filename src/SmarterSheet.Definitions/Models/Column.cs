@@ -15,7 +15,7 @@ public sealed class Column
     public int Index { get; set; }
 
     [JsonPropertyName("title")]
-    public string? Title { get; set; }
+    public string Title { get; set; } = default!;
 
     [JsonPropertyName("type")]
     public ColumnType Type { get; set; }
