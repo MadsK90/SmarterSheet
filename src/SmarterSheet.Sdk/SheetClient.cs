@@ -6,9 +6,11 @@ public sealed class SheetClient
     private readonly HttpClient _httpClient;
     #endregion
 
-    public SheetClient(HttpClient httpClient)
+    public SheetClient(HttpClient httpClient, string apiKey)
     {
         _httpClient = httpClient;
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
     }
 
     #region Rows

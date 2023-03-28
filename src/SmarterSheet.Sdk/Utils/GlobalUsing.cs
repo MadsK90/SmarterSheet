@@ -1,5 +1,6 @@
 ﻿global using Serilog;
 global using System.Net.Http.Json;
+global using System.Net.Http.Headers;
 global using System.Text.Json.Serialization;
 global using SmarterSheet.Sdk.Models;
 global using SmarterSheet.Sdk.Builders.Rows;

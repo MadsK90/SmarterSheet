@@ -10,3 +10,4 @@ global using SmarterSheet.Definitions.Models;
 global using System.Net.Http.Headers;
 global using Serilog;
 global using Xunit.Abstractions;
+global using SmarterSheet.SDK.Tests.Integration.Utils;

@@ -6,10 +6,10 @@ var response = await client.CreateSheet(new Sheet
 {
     Name = "TestSheet",
     Columns = new Column[]
-                {
-                    new Column { Title = "Primary Column", Primary = true, Type =  ColumnType.TextNumber},
-                    new Column {Title = "Favourite", Type = ColumnType.CheckBox}
-                }
+    {
+        new Column { Title = "Primary Column", Primary = true, Type =  ColumnType.TextNumber},
+        new Column {Title = "Favourite", Type = ColumnType.CheckBox}
+    }
 });
 
 Console.WriteLine("");

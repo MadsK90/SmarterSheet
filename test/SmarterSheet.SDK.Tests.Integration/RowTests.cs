@@ -1,25 +1,14 @@
 ﻿namespace SmarterSheet.SDK.Tests.Integration;
 
-public sealed class RowTests : IAsyncLifetime
+public sealed class RowTests : SheetClientTests
 {
     private readonly SheetClient _sut;
     private Sheet? _testSheet;
     private readonly Dictionary<string, ulong> _testSheetColumns = new();
 
-    public RowTests(ITestOutputHelper output)
+    public RowTests(ITestOutputHelper output) : base(output, "")
     {
-        var httpClient = new HttpClient
-        {
-            BaseAddress = new Uri(ApiRoutes.BASE)
-        };
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "82XgDAzgQqF1PuXYy1pkTkccp2QQfRjGI9lrF");
-
-        _sut = new SheetClient(httpClient);
-
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo
-            .TestOutput(output)
-            .CreateLogger();
+        _sut = CreateSheetClient();
     }
 
     #region Get
@@ -70,9 +59,16 @@ public sealed class RowTests : IAsyncLifetime
 
     #endregion
 
-    //TODO: Figure out a better way of handling this, should only happen when Smartsheet is down but still.
-    //Throw a meaningful exception
-    public async Task InitializeAsync()
+    public override async Task DisposeAsync()
+    {
+        if (_testSheet == null)
+            return;
+
+        if (!await _sut.DeleteSheet(_testSheet.Id))
+            throw new Exception("Failed to clean up");
+    }
+
+    public override async Task InitializeAsync()
     {
         _testSheet = await _sut.CreateSheet(new Sheet
         {
@@ -93,14 +89,5 @@ public sealed class RowTests : IAsyncLifetime
 
         _testSheetColumns.Add("Primary Column", primaryColumn.Id);
         _testSheetColumns.Add("Favourite", favouriteColumn.Id);
-    }
-
-    public async Task DisposeAsync()
-    {
-        if (_testSheet == null)
-            return;
-
-        if (!await _sut.DeleteSheet(_testSheet.Id))
-            throw new Exception("Failed to clean up");
     }
 }

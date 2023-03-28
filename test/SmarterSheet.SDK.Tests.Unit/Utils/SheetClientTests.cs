@@ -1,11 +1,13 @@
-﻿using SmarterSheet.Definitions.Models;
-
-namespace SmarterSheet.SDK.Tests.Unit.Utils;
+﻿namespace SmarterSheet.SDK.Tests.Unit.Utils;
 
 public abstract class SheetClientTests
 {
-    protected SheetClientTests(ITestOutputHelper output)
+    private readonly string _apiKey;
+
+    protected SheetClientTests(ITestOutputHelper output, string apiKey)
     {
+        _apiKey = apiKey;
+
         Log.Logger = new LoggerConfiguration()
             .WriteTo
             .TestOutput(output)
@@ -21,7 +23,7 @@ public abstract class SheetClientTests
         var httpClient = mockHttp.ToHttpClient();
         httpClient.BaseAddress = new Uri(ApiRoutes.BASE);
 
-        return new SheetClient(httpClient);
+        return new SheetClient(httpClient, _apiKey);
     }
 
     protected static JsonContent CreateSuccessfulResult<T>(T data)
